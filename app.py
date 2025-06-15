@@ -6,6 +6,7 @@ import random
 import time
 import datetime
 import io
+import re
 from PIL import Image
 from streamlit_tags import st_tags
 from pdfminer3.layout import LAParams
@@ -17,10 +18,8 @@ from yt_dlp import YoutubeDL
 import nltk
 nltk.download('stopwords')
 
-# === Streamlit Page Configuration ===
 st.set_page_config(page_title="Automated Resume Grader", page_icon="📄")
 
-# === SQLite Database Setup ===
 conn = sqlite3.connect('resume_data.db', check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute("""
@@ -75,6 +74,17 @@ def pdf_reader(file):
     fake_file_handle.close()
     return text
 
+def extract_basic_info(text):
+    email_match = re.search(r"[\w\.-]+@[\w\.-]+", text)
+    phone_match = re.search(r"(\+\d{1,3}[\s-]?)?(\d{10})", text)
+    name_match = re.search(r"(?i)(name[:\s]+)([A-Z][a-z]+\s[A-Z][a-z]+)", text)
+
+    email = email_match.group() if email_match else ""
+    phone = phone_match.group() if phone_match else ""
+    name = name_match.group(2) if name_match else "Extracted Name"
+
+    return name.strip(), email.strip(), phone.strip()
+
 def course_recommender(course_list):
     st.subheader("**Courses & Certificates Recommendations \U0001F393**")
     rec_course = []
@@ -105,27 +115,23 @@ def run():
 
                 file_extension = pdf_file.name.split(".")[-1].lower()
                 if file_extension == "pdf":
-                    resume_data = {
-                        'name': "Extracted Name",
-                        'email': "user@example.com",
-                        'mobile_number': "1234567890",
-                        'skills': ['python', 'sql', 'flask'],
-                        'no_of_pages': 1
-                    }
                     resume_text = pdf_reader(save_path)
                 elif file_extension == "txt":
                     with open(save_path, "r", encoding="utf-8") as f:
                         resume_text = f.read()
-                    resume_data = {
-                        'name': "Extracted from TXT",
-                        'email': "",
-                        'mobile_number': "",
-                        'skills': [],
-                        'no_of_pages': len(resume_text.split('\n')) // 10
-                    }
                 else:
                     st.error("Unsupported file format!")
                     return
+
+                name, email, phone = extract_basic_info(resume_text)
+
+                resume_data = {
+                    'name': name,
+                    'email': email,
+                    'mobile_number': phone,
+                    'skills': ['python', 'sql', 'flask'],
+                    'no_of_pages': resume_text.count("\f") or 1
+                }
 
                 st.header("**Resume Analysis**")
                 st.success("Hello " + resume_data['name'])
