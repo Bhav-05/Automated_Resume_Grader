@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import base64,random
 import time,datetime
-from pyresparser import ResumeParser
+#from pyresparser import ResumeParser
 from pdfminer3.layout import LAParams, LTTextBox
 from pdfminer3.pdfpage import PDFPage
 from pdfminer3.pdfinterp import PDFResourceManager
@@ -128,7 +128,15 @@ def run():
                 file_extension = pdf_file.name.split(".")[-1].lower()
                 if file_extension == "pdf":
     # Existing PDF parsing
-                    resume_data = ResumeParser(save_path).get_extracted_data()
+                    #resume_data = ResumeParser(save_path).get_extracted_data()
+                    resume_data = {
+                        'name': "Extracted Name",
+                        'email': "user@example.com",
+                        'mobile_number': "1234567890",
+                        'skills': ['python', 'sql', 'flask'],
+                         'no_of_pages': 1
+                   }
+
                     resume_text = pdf_reader(save_path)  # Uses pdfminer
                 elif file_extension == "txt":
     # TXT parsing
