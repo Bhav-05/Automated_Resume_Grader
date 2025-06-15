@@ -84,14 +84,29 @@ def run():
 
                 file_extension = pdf_file.name.split(".")[-1].lower()
                 if file_extension == "pdf":
+                    resume_text = pdf_reader(save_path)
+
+                    # Basic email extraction
+                    import re
+                    email_match = re.search(r'[\w\.-]+@[\w\.-]+', resume_text)
+                    email = email_match.group(0) if email_match else "Email Not Found"
+
+                    # Basic name extraction from first few lines
+                    lines = resume_text.split("\n")
+                    lines = [line.strip() for line in lines if line.strip()]
+                    name = "Name Not Found"
+                    for line in lines[:10]:
+                        if len(line.split()) >= 2 and not re.search(r'\d|@', line) and not any(x in line.lower() for x in ["email", "mobile", "resume", "cv"]):
+                        name = line
+                        break
+
                     resume_data = {
-                        'name': "Extracted Name",
-                        'email': "user@example.com",
-                        'mobile_number': "1234567890",
+                        'name': name,
+                        'email': email,
                         'skills': ['python', 'sql', 'flask'],
                         'no_of_pages': 1
-                    }
-                    resume_text = pdf_reader(save_path)
+                        }
+
                 elif file_extension == "txt":
                     with open(save_path, "r", encoding="utf-8") as f:
                         resume_text = f.read()
