@@ -7,3 +7,4 @@ nltk
 pdfminer3
 streamlit-tags
 pafy
+yt-dlp
