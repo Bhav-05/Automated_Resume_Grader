@@ -97,8 +97,8 @@ def run():
                     name = "Name Not Found"
                     for line in lines[:10]:
                         if len(line.split()) >= 2 and not re.search(r'\d|@', line) and not any(x in line.lower() for x in ["email", "mobile", "resume", "cv"]):
-                        name = line
-                        break
+                            name = line
+                            break
 
                     resume_data = {
                         'name': name,
