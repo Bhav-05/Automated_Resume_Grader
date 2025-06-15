@@ -1,5 +1,5 @@
-pdfminer3
-pyresparser
+pdfminer.six
+git+https://github.com/bhavint/pyresparser.git
 streamlit
 pandas
 pafy
