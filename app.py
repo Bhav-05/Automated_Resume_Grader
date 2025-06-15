@@ -11,7 +11,7 @@ from pdfminer3.converter import TextConverter
 import io,random
 from streamlit_tags import st_tags
 from PIL import Image
-import pymysql
+#import pymysql
 from Courses import ds_course,web_course,android_course,ios_course,uiux_course,resume_videos
 from yt_dlp import YoutubeDL 
 import nltk
@@ -66,16 +66,16 @@ def course_recommender(course_list):
     return rec_course
 
 #CONNECT TO DATABASE
-connection = pymysql.connect(host='localhost',user='root',password='S@mbhav0519',db='cv')
-cursor = connection.cursor()
+#connection = pymysql.connect(host='localhost',user='root',password='S@mbhav0519',db='cv')
+#cursor = connection.cursor()
 
-def insert_data(name,email,res_score,timestamp,no_of_pages,reco_field,cand_level,skills,recommended_skills,courses):
-    DB_table_name = 'user_data'
-    insert_sql = "insert into " + DB_table_name + """
-    values (0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-    rec_values = (name, email, str(res_score), timestamp,str(no_of_pages), reco_field, cand_level, skills,recommended_skills,courses)
-    cursor.execute(insert_sql, rec_values)
-    connection.commit()
+#def insert_data(name,email,res_score,timestamp,no_of_pages,reco_field,cand_level,skills,recommended_skills,courses):
+    #DB_table_name = 'user_data'
+    #insert_sql = "insert into " + DB_table_name + """
+    #values (0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    #rec_values = (name, email, str(res_score), timestamp,str(no_of_pages), reco_field, cand_level, skills,recommended_skills,courses)
+    #cursor.execute(insert_sql, rec_values)
+    #connection.commit()
 
 st.set_page_config(
    page_title="Automated Resume Grader",
@@ -128,7 +128,15 @@ def run():
                 file_extension = pdf_file.name.split(".")[-1].lower()
                 if file_extension == "pdf":
     # Existing PDF parsing
-                    resume_data = ResumeParser(save_path).get_extracted_data()
+                    #resume_data = ResumeParser(save_path).get_extracted_data()
+                    resume_data = {
+                        'name': "Extracted Name",
+                        'email': "user@example.com",
+                        'mobile_number': "1234567890",
+                        'skills': ['python', 'sql', 'flask'],
+                         'no_of_pages': 1
+                   }
+
                     resume_text = pdf_reader(save_path)  # Uses pdfminer
                 elif file_extension == "txt":
     # TXT parsing
@@ -250,7 +258,7 @@ def run():
                 cur_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
                 cur_time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                 timestamp = str(cur_date+'_'+cur_time)
-
+               
                 ### Resume writing recommendation
                 st.subheader("**Resume Tips & Ideas💡**")
                 resume_score = 0
@@ -341,3 +349,4 @@ def run():
             else:
                 st.error("Wrong ID & Password Provided")
 run()
+                
