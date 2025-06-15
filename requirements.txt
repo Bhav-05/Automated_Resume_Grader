@@ -4,6 +4,8 @@ plotly
 pymysql
 pillow
 nltk
-pdfminer.six
+pdfminer3
+pyresparser
 streamlit-tags
+pafy
 spacy==2.2.4
